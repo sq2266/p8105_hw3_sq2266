@@ -43,7 +43,56 @@ cleaned_df =
 head(cleaned_df)
 ```
 
+
+### Produce a reader-friendly table for the number of men and women in each education category, and create a visualization of the age distributions for men and women in each education category. Comment on these items.
 ```{r}
-  
+sex_edu_table = 
+  cleaned_df |>
+  group_by(sex,education) |>
+  mutate(
+    education = as.factor(education),
+    sex = as.factor(sex)
+  ) |>
+  summarise(count = n()) |>
+  arrange(sex,education)
+
+print(sex_edu_table)
+```
+
+```{r}
+age_distribution_plot = 
+  cleaned_df |>
+  ggplot(aes(x = age, fill = sex)) +
+  geom_histogram(binwidth = 3) +
+  facet_wrap(~education) +
+  labs(title = "Age Distribution by Gender and Eduaction", 
+       x = "Age",
+       y = "Count")
+print(age_distribution_plot)
+```
+
+comment:
+
+### Traditional analyses of accelerometer data focus on the total activity over the day. Using your tidied dataset, aggregate across minutes to create a total activity variable for each participant. Plot these total activities (y-axis) against age (x-axis); your plot should compare men to women and have separate panels for each education level. Include a trend line or a smooth to illustrate differences. Comment on your plot.
+
+```{r}
+total_activity_df = 
+  cleaned_df |>
+  group_by(seqn, sex, age, education) |>
+  summarise(total_activity = sum(`activity value`, na.rm = TRUE))
+```
+
+
+```{r}
+total_activity_df |>
+  ggplot(aes(x = age, y = total_activity,color = sex)) +
+  geom_point(alpha = .2)+
+  geom_smooth(method = "loess", se = FALSE) +
+  facet_wrap(~education) +
+  labs(title = "Total Activity",
+       x = "Age",
+       y = "Total Activity",
+       color = "Gender") +
+  theme_minimal()
 ```
 
