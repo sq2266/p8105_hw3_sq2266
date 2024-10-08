@@ -80,10 +80,7 @@ total_activity_df =
   cleaned_df |>
   group_by(seqn, sex, age, education) |>
   summarise(total_activity = sum(`activity value`, na.rm = TRUE))
-```
 
-
-```{r}
 total_activity_df |>
   ggplot(aes(x = age, y = total_activity,color = sex)) +
   geom_point(alpha = .2)+
@@ -95,4 +92,33 @@ total_activity_df |>
        color = "Gender") +
   theme_minimal()
 ```
+
+### Accelerometer data allows the inspection activity over the course of the day. Make a three-panel plot that shows the 24-hour activity time courses for each education level and use color to indicate sex. Describe in words any patterns or conclusions you can make based on this graph; including smooth trends may help identify differences.
+```{r}
+activity_time_df = 
+  cleaned_df |>
+  group_by(sex,education, minute)|>
+  summarise(ave_activity = mean(`activity value`, na.rm = TRUE))
+
+```
+
+```{r}
+activity_time_df |>
+  ggplot(aes(x = minute, y = ave_activity, color = sex))+
+  geom_point(alpha = .2) +
+  facet_wrap(~education) + 
+  labs(title = "24-Hour Activity Time Courses by Education Level and Gender",
+       x = "Time (Minute)",
+       y = "Average Activity Level",
+       color = "Gender") +
+  theme_minimal()
+```
+
+Description:
+
+
+
+## Q3
+
+
 
