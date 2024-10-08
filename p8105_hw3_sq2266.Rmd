@@ -1,0 +1,49 @@
+---
+title: "Homework 3"
+output: github_document
+---
+
+```{r}
+library(tidyverse)
+```
+
+
+## Problem 1
+### Load, tidy, merge, and otherwise organize the data sets. Your final dataset should include all originally observed variables; exclude participants less than 21 years of age, and those with missing demographic data; and encode data with reasonable variable classes (i.e. not numeric, and using factors with the ordering of tables and plots in mind).
+
+Cleaning and combining data sets
+```{r}
+demographic_df = 
+  read_csv("datasets/nhanes_covar.csv",na = c("NA",".",""), skip = 4)|>
+  janitor::clean_names() |>
+  filter(age >= 21)
+
+accelerometer_df = 
+  read_csv("datasets/nhanes_accel.csv",na = c("NA",".",""))|>
+  janitor::clean_names() |>
+  pivot_longer(
+    cols = starts_with("min"),
+    names_to = "minute",
+    values_to = "activity value"
+  )
+```
+
+```{r}
+cleaned_df = 
+  demographic_df |>
+  inner_join(accelerometer_df, by=c("seqn"))|>
+  filter(!is.na(sex) & !is.na(bmi) & !is.na(education) & !is.na(age)) |>
+  mutate(
+    sex = ifelse(sex == 1, "male", "female"),
+    education = case_when(
+      education == 1 ~ "Less than high school",
+      education == 2 ~ "High school equivalent",
+      education == 3 ~ "More than high school"
+  ))
+head(cleaned_df)
+```
+
+```{r}
+  
+```
+
