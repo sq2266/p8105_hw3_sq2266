@@ -57,8 +57,10 @@ Cleaning and combining data sets
 demographic_df = 
   read_csv("datasets/nhanes_covar.csv",na = c("NA",".",""), skip = 4)|>
   janitor::clean_names() |>
-  filter(age >= 21)
+  filter(age >= 21,!is.na(bmi),!is.na(sex),!is.na(age),!is.na(education))
+```
 
+```{r}
 accelerometer_df = 
   read_csv("datasets/nhanes_accel.csv",na = c("NA",".",""))|>
   janitor::clean_names() |>
