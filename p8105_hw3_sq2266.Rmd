@@ -1,5 +1,6 @@
 ---
 title: "Homework 3"
+author: "Sihan Qiu"
 output: github_document
 ---
 
@@ -7,8 +8,48 @@ output: github_document
 library(tidyverse)
 ```
 
-
 ## Problem 1
+```{r}
+library(p8105.datasets)
+data("ny_noaa")
+```
+
+Description: 
+this data set contains `r nrow(ny_noaa)` observations, and `r ncol(ny_noaa)` variables. Key variables include station id, data, perception, snowfall, depth of snow, min and max temperature. 
+
+```{r}
+ny_noaa |>
+  count(snow)|>
+  arrange(desc(n))
+
+ny_noaa = 
+  ny_noaa |>
+  separate(date, into = c("year", "month", "day"), convert = TRUE)|>
+  mutate(
+    tmax = as.numeric(tmax),
+    tmin = as.numeric(tmin))
+```
+
+```{r}
+january_july_data =
+  ny_noaa |>
+  filter(month %in% c("01", "07")) |>
+  group_by(id, year, month) |>
+  summarize(avg_tmax = mean(tmax, na.rm = TRUE)) |>
+  ggplot(aes(x = year, y = avg_tmax, group = id, color = id)) +
+  geom_line() +
+  facet_wrap(~ month, ncol = 1, labeller = labeller(month = c("01" = "January", "07" = "July"))) +
+  labs(title = "Average Max Temperature in January and July across Stations",
+       x = "Year", y = "Average Max Temperature (°C)")
+
+```
+
+
+
+
+
+
+## Problem 2
 ### Load, tidy, merge, and otherwise organize the data sets. Your final dataset should include all originally observed variables; exclude participants less than 21 years of age, and those with missing demographic data; and encode data with reasonable variable classes (i.e. not numeric, and using factors with the ordering of tables and plots in mind).
 
 Cleaning and combining data sets
@@ -46,18 +87,18 @@ head(cleaned_df)
 
 ### Produce a reader-friendly table for the number of men and women in each education category, and create a visualization of the age distributions for men and women in each education category. Comment on these items.
 ```{r}
-sex_edu_table = 
-  cleaned_df |>
+cleaned_df |>
   group_by(sex,education) |>
   mutate(
     education = as.factor(education),
     sex = as.factor(sex)
   ) |>
   summarise(count = n()) |>
-  arrange(sex,education)
-
-print(sex_edu_table)
+  arrange(sex,education) |>
+ knitr::kable()
 ```
+Comment:
+Both females and males have highest counts in more than high school. there are more females with the education level of less than high school. It may indicate a stereotype within gender.
 
 ```{r}
 age_distribution_plot = 
@@ -70,10 +111,8 @@ age_distribution_plot =
        y = "Count")
 print(age_distribution_plot)
 ```
-
-comment:
-
-### Traditional analyses of accelerometer data focus on the total activity over the day. Using your tidied dataset, aggregate across minutes to create a total activity variable for each participant. Plot these total activities (y-axis) against age (x-axis); your plot should compare men to women and have separate panels for each education level. Include a trend line or a smooth to illustrate differences. Comment on your plot.
+Comment:
+Traditional analyses of accelerometer data focus on the total activity over the day. Using your tidied dataset, aggregate across minutes to create a total activity variable for each participant. Plot these total activities (y-axis) against age (x-axis); your plot should compare men to women and have separate panels for each education level. Include a trend line or a smooth to illustrate differences. Comment on your plot.
 
 ```{r}
 total_activity_df = 
@@ -93,7 +132,7 @@ total_activity_df |>
   theme_minimal()
 ```
 
-### Accelerometer data allows the inspection activity over the course of the day. Make a three-panel plot that shows the 24-hour activity time courses for each education level and use color to indicate sex. Describe in words any patterns or conclusions you can make based on this graph; including smooth trends may help identify differences.
+###Make a three-panel plot that shows the 24-hour activity time courses for each education level and use color to indicate sex. 
 ```{r}
 activity_time_df = 
   cleaned_df |>
@@ -115,7 +154,7 @@ activity_time_df |>
 ```
 
 Description:
-
+WE can see that there are peaks in all three panels in the morning and afternoon. It means that people start or end studying at peak times. People may just get up and go to sleep. the shapes of three panels are almost same, but seems like people with less than high school education level tend to study very late. By comparing gender, in all three panels, females tend to have higher study activity level than males. It means that females may spend more time on studying. 
 
 
 ## Q3
