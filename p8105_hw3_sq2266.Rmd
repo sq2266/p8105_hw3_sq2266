@@ -152,7 +152,8 @@ activity_time_df |>
        x = "Time (Minute)",
        y = "Average Activity Level",
        color = "Gender") +
-  theme_minimal()
+  theme_minimal() 
+  
 ```
 
 Description:
