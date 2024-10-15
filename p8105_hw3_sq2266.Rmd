@@ -125,7 +125,9 @@ age_distribution_plot =
 print(age_distribution_plot)
 ```
 Comment:
-Traditional analyses of accelerometer data focus on the total activity over the day. Using your tidied dataset, aggregate across minutes to create a total activity variable for each participant. Plot these total activities (y-axis) against age (x-axis); your plot should compare men to women and have separate panels for each education level. Include a trend line or a smooth to illustrate differences. Comment on your plot.
+Traditional analyses of accelerometer data focus on the total activity over the day. Using your tidied dataset, aggregate across minutes to create a total activity variable for each participant. 
+
+### Plot these total activities (y-axis) against age (x-axis); your plot should compare men to women and have separate panels for each education level. Include a trend line or a smooth to illustrate differences. Comment on your plot.
 
 ```{r}
 total_activity_df = 
@@ -145,7 +147,7 @@ total_activity_df |>
   theme_minimal()
 ```
 
-###Make a three-panel plot that shows the 24-hour activity time courses for each education level and use color to indicate sex. 
+### Make a three-panel plot that shows the 24-hour activity time courses for each education level and use color to indicate sex. 
 ```{r}
 activity_time_df = 
   cleaned_df |>
@@ -212,7 +214,7 @@ july_2024_citi_df =
 ```{r}
 citi_all_df = 
   bind_rows(jan_2020_citi_df,july_2020_citi_df,jan_2024_citi_df,july_2024_citi_df) |>
-  
+  filter(!is.na(start_station_name), !is.na(end_station_name))|>
   mutate(weekdays = factor(weekdays, 
                            levels = c(
                             "Monday", 
@@ -243,7 +245,7 @@ the tidy citi data set includes `r nrow(citi_all_df)` observations, and `r ncol(
 knitr::kable()
 ```
 Description:
-We can see that there were more members using citi than casual users in 2020 Jan to 2024 Jan in general. The total use of causal and member in 2024 July both increased a lotc comparing to 2020. We also can see an increased demand on citi in NYC. 
+We can see that there were more members using citi than casual users in 2020 Jan to 2024 Jan in general. The total use of causal and member in 2024 July both increased a lot comparing to 2020. We also can see an increased demand on citi in NYC. 
 
 ### Make a table showing the 5 most popular starting stations for July 2024; include the number of rides originating from these stations.
 ```{r}
@@ -275,7 +277,7 @@ Comments:
 In both 2020 and 2024, rides in July generally have longer median durations compared to January. This may relate to weather. July is warmer than January. In July 2020, there is an increase ride duration on weekends. People have more leisure time to use citi bike. In July 2020, the duration is higher than other three months. 
 
 
-###There were relatively few electric Citi Bikes in 2020, but many more are available now. For data in 2024, make a figure that shows the impact of month, membership status, and bike type on the distribution of ride duration. Comment on your results.
+### There were relatively few electric Citi Bikes in 2020, but many more are available now. For data in 2024, make a figure that shows the impact of month, membership status, and bike type on the distribution of ride duration. Comment on your results.
 ```{r}
 ride_2024 =
   bind_rows(jan_2024_citi_df, july_2024_citi_df) |>
