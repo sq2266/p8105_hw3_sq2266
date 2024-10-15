@@ -111,7 +111,7 @@ demographic_df |>
 ```
 
 Comment:
-Both females and males have highest counts in more than high school. there are more females with the education level of less than high school. It may indicate a stereotype within gender.
+The number of both females and males with more than high school education and less than high school are almost same. There are more than 50 people (males and females separately) with more than high school education. However, there are more males with high school equivalent level than females. 
 
 ```{r}
 age_distribution_plot = 
@@ -212,7 +212,7 @@ july_2024_citi_df =
 ```{r}
 citi_all_df = 
   bind_rows(jan_2020_citi_df,july_2020_citi_df,jan_2024_citi_df,july_2024_citi_df) |>
-  filter(!is.na(start_station_name)&!is.na(end_station_name)) |>
+  
   mutate(weekdays = factor(weekdays, 
                            levels = c(
                             "Monday", 
@@ -226,6 +226,7 @@ citi_all_df =
   arrange(weekdays)
 ```
 
+
 Description:
 the tidy citi data set includes `r nrow(citi_all_df)` observations, and `r ncol(citi_all_df)` variables. Key variables includes riders' id, bike's type, the day they used, duration, the start station's name and end stattion's name, as well as whether they are member of citi. I combined four individual data sets by users' id, and remove all missing data in start station and end station. I also re-arrange the weekdays variable, by preseting from Monday to Sunday. 
 
@@ -235,6 +236,10 @@ the tidy citi data set includes `r nrow(citi_all_df)` observations, and `r ncol(
   citi_all_df |>
   group_by(year, month,member_casual)|>
   summarise(total_rides = n()) |>
+  pivot_wider(
+    names_from = member_casual,  
+    values_from = total_rides     
+  ) |>
 knitr::kable()
 ```
 Description:
@@ -285,11 +290,4 @@ ride_2024
 ```
 Comment:
 We can see that casual riders tend to have longer duration than member riders because the spread looks wider than member riders. Classic bikes tend to have wider spread in casual riders, but same spread in member riders. In January, the use of classic bike is higher than electric bike both for casual riders and member rider. However, the use of two bikes are almost same in July. 
-
-
-
-
-
-
-
 
