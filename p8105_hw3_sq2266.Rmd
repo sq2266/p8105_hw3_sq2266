@@ -67,7 +67,14 @@ Cleaning and combining data sets
 demographic_df = 
   read_csv("datasets/nhanes_covar.csv",na = c("NA",".",""), skip = 4)|>
   janitor::clean_names() |>
-  filter(age >= 21,!is.na(bmi),!is.na(sex),!is.na(age),!is.na(education))
+  filter(age >= 21,!is.na(bmi),!is.na(sex),!is.na(age),!is.na(education))|>
+  mutate(
+    sex = ifelse(sex == 1, "male", "female"),
+    education = case_when(
+      education == 1 ~ "Less than high school",
+      education == 2 ~ "High school equivalent",
+      education == 3 ~ "More than high school"
+  ))
 ```
 
 ```{r}
@@ -85,21 +92,14 @@ accelerometer_df =
 cleaned_df = 
   demographic_df |>
   inner_join(accelerometer_df, by=c("seqn"))|>
-  filter(!is.na(sex) & !is.na(bmi) & !is.na(education) & !is.na(age)) |>
-  mutate(
-    sex = ifelse(sex == 1, "male", "female"),
-    education = case_when(
-      education == 1 ~ "Less than high school",
-      education == 2 ~ "High school equivalent",
-      education == 3 ~ "More than high school"
-  ))
+  filter(!is.na(sex) & !is.na(bmi) & !is.na(education) & !is.na(age))
 head(cleaned_df)
 ```
 
 
 ### Produce a reader-friendly table for the number of men and women in each education category, and create a visualization of the age distributions for men and women in each education category. Comment on these items.
 ```{r}
-cleaned_df |>
+demographic_df |>
   group_by(sex,education) |>
   mutate(
     education = as.factor(education),
@@ -109,6 +109,7 @@ cleaned_df |>
   arrange(sex,education) |>
  knitr::kable()
 ```
+
 Comment:
 Both females and males have highest counts in more than high school. there are more females with the education level of less than high school. It may indicate a stereotype within gender.
 
